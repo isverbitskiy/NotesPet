@@ -1,9 +1,13 @@
 package com.isverbit.notespet.screens
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -15,36 +19,55 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.isverbit.notespet.NoteViewModel
+import com.isverbit.notespet.navigation.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ViewNoteScreen(navController: NavController, noteId: Int, noteViewModel: NoteViewModel) {
     val note by noteViewModel.getNoteById(noteId).collectAsState(initial = null)
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("View Note") }
-            )
-        }
-    ) { padding ->
-        note?.let {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(padding)
-                    .padding(16.dp)
-            ) {
-                Text(
-                    text = it.title,
-                    style = MaterialTheme.typography.headlineSmall,
-                    modifier = Modifier.padding(bottom = 8.dp)
+    note?.let {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = { Text("View Note") },
+                    actions = {
+                        IconButton(onClick = {
+                            navController.navigate("${Screen.EditNote.route}/$noteId")
+                        }) {
+                            Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit Note")
+                        }
+                        IconButton(onClick = {
+                            noteViewModel.deleteNote(note!!)
+                            navController.navigate(Screen.Main.route) {
+                                popUpTo(Screen.Main.route) { inclusive = true }
+                            }
+                        }) {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = "Delete Note"
+                            )
+                        }
+                    }
                 )
-                Text(
-                    text = it.content,
-                    style = MaterialTheme.typography.bodyMedium
-                )
+            },
+            content = { padding ->
+                Column(
+                    modifier = Modifier
+                        .padding(padding)
+                        .padding(16.dp)
+                ) {
+                    Text(
+                        text = it.title,
+                        style = MaterialTheme.typography.headlineSmall,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    Text(
+                        text = it.content,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
             }
-        }
+        )
     }
 }

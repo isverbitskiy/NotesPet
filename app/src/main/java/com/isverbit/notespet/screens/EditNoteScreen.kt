@@ -2,29 +2,51 @@ package com.isverbit.notespet.screens
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Save
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.isverbit.notespet.Note
 import com.isverbit.notespet.NoteViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditNoteScreen(navController: NavController, noteId: Int?, noteViewModel: NoteViewModel) {
+fun EditNoteScreen(
+    navController: NavController,
+    noteId: Int?,
+    noteViewModel: NoteViewModel
+) {
     var title by remember { mutableStateOf("") }
     var content by remember { mutableStateOf("") }
-    var showWarning by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
 
-    noteId?.let {
-        val note by noteViewModel.getNoteById(it).collectAsState(initial = null)
-        note?.let {
-            title = it.title
-            content = it.content
+    if (noteId != null && noteId != 0) {
+        LaunchedEffect(noteId) {
+            noteViewModel.getNoteById(noteId).collect { note ->
+                note?.let {
+                    title = it.title
+                    content = it.content
+                }
+            }
         }
     }
 
@@ -35,57 +57,54 @@ fun EditNoteScreen(navController: NavController, noteId: Int?, noteViewModel: No
                 actions = {
                     IconButton(onClick = {
                         if (title.isNotBlank()) {
-                            if (noteId == null) {
-                                noteViewModel.addNote(
-                                    title = title,
-                                    content = content
-                                )
-                            } else {
-                                noteViewModel.updateNote(
-                                    Note(
-                                        id = noteId,
+                            coroutineScope.launch {
+                                if (noteId != null && noteId != 0) {
+                                    noteViewModel.updateNote(
+                                        Note(
+                                            id = noteId,
+                                            title = title,
+                                            content = content
+                                        )
+                                    )
+                                } else {
+                                    noteViewModel.addNote(
                                         title = title,
                                         content = content
                                     )
-                                )
+                                }
+                                navController.popBackStack()
                             }
-                            navController.popBackStack()
-                        } else {
-                            showWarning = true
                         }
                     }) {
                         Icon(imageVector = Icons.Default.Save, contentDescription = "Save Note")
                     }
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(imageVector = Icons.Default.Close, contentDescription = "Cancel")
+                    }
                 }
             )
         }
-    ) { padding ->
+    ) { paddingValues ->
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(padding)
+                .padding(paddingValues)
                 .padding(16.dp)
         ) {
-            if (showWarning) {
-                Text(
-                    text = "Title is required",
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodySmall
-                )
-            }
-            TextField(
+            OutlinedTextField(
                 value = title,
                 onValueChange = { title = it },
                 label = { Text("Title") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
             )
-            TextField(
+            OutlinedTextField(
                 value = content,
                 onValueChange = { content = it },
                 label = { Text("Content") },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 16.dp)
+                    .height(200.dp)
             )
         }
     }
