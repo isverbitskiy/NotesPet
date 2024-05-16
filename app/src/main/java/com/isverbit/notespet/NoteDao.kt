@@ -12,12 +12,12 @@ interface NoteDao {
     @Query("SELECT * FROM notes")
     fun getAllNotes(): Flow<List<Note>>
 
+    @Query("SELECT * FROM notes WHERE id = :noteId")
+    fun getNoteById(noteId: Int): Flow<Note>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(note: Note)
 
     @Delete
     suspend fun delete(note: Note)
-
-    @Query("SELECT * FROM notes WHERE id = :noteId")
-    fun getNoteById(noteId: Int): Flow<Note?>
 }

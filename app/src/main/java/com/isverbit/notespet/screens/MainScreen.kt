@@ -9,13 +9,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -25,7 +23,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.isverbit.notespet.Note
 import com.isverbit.notespet.NoteViewModel
@@ -33,7 +30,7 @@ import com.isverbit.notespet.navigation.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(navController: NavController, noteViewModel: NoteViewModel = viewModel()) {
+fun MainScreen(navController: NavController, noteViewModel: NoteViewModel) {
     val notes by noteViewModel.allNotes.collectAsState(initial = emptyList())
 
     Scaffold(
@@ -57,7 +54,7 @@ fun MainScreen(navController: NavController, noteViewModel: NoteViewModel = view
         ) {
             items(notes) { note ->
                 NoteItem(note = note) {
-                    navController.navigate("${Screen.EditNote.route}/${note.id}")
+                    navController.navigate("${Screen.ViewNote.route}/${note.id}")
                 }
             }
         }
@@ -81,12 +78,9 @@ fun NoteItem(note: Note, onClick: () -> Unit) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = note.content,
+                text = note.title,
                 modifier = Modifier.weight(1f)
             )
-            IconButton(onClick = { onClick() }) {
-                Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit Note")
-            }
         }
     }
 }

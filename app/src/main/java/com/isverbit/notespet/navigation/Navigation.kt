@@ -1,38 +1,34 @@
 package com.isverbit.notespet.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavType
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
+import com.isverbit.notespet.NoteViewModel
 import com.isverbit.notespet.screens.EditNoteScreen
 import com.isverbit.notespet.screens.MainScreen
 import com.isverbit.notespet.screens.ViewNoteScreen
 
 @Composable
-fun Navigation() {
-    val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = Screen.Main.route) {
-        composable(route = Screen.Main.route) {
-            MainScreen(navController = navController)
+fun Navigation(navController: NavHostController, noteViewModel: NoteViewModel) {
+    NavHost(navController, startDestination = Screen.Main.route) {
+        composable(Screen.Main.route) {
+            MainScreen(navController, noteViewModel)
         }
-        composable(route = Screen.EditNote.route) {
-            EditNoteScreen(navController = navController, noteId = null)
+        composable(Screen.EditNote.route) {
+            EditNoteScreen(navController, null, noteViewModel)
         }
-        composable(
-            route = "${Screen.EditNote.route}/{noteId}",
-            arguments = listOf(navArgument("noteId") { type = NavType.IntType })
-        ) { backStackEntry ->
-            val noteId = backStackEntry.arguments?.getInt("noteId")
-            EditNoteScreen(navController = navController, noteId = noteId)
+        composable(Screen.ViewNote.route + "/{noteId}") { backStackEntry ->
+            val noteId = backStackEntry.arguments?.getString("noteId")?.toIntOrNull()
+            if (noteId != null) {
+                ViewNoteScreen(navController, noteId, noteViewModel)
+            }
         }
-        composable(
-            route = "${Screen.ViewNote.route}/{noteId}",
-            arguments = listOf(navArgument("noteId") { type = NavType.IntType })
-        ) { backStackEntry ->
-            val noteId = backStackEntry.arguments?.getInt("noteId") ?: -1
-            ViewNoteScreen(navController = navController, noteId = noteId)
+        composable(Screen.EditNote.route + "/{noteId}") { backStackEntry ->
+            val noteId = backStackEntry.arguments?.getString("noteId")?.toIntOrNull()
+            if (noteId != null) {
+                EditNoteScreen(navController, noteId, noteViewModel)
+            }
         }
     }
 }

@@ -1,42 +1,38 @@
 package com.isverbit.notespet
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
-class NoteViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository: NoteRepository
+class NoteViewModel(private val noteDao: NoteDao) : ViewModel() {
+    val allNotes: Flow<List<Note>> = noteDao.getAllNotes()
 
-    val allNotes: Flow<List<Note>>
-
-    init {
-        val noteDao = NoteDatabase.getDatabase(application).noteDao()
-        repository = NoteRepository(noteDao)
-        allNotes = repository.allNotes
+    fun getNoteById(noteId: Int): Flow<Note> {
+        return noteDao.getNoteById(noteId)
     }
 
-    fun addNote(noteContent: String) {
-        val note = Note(content = noteContent)
+    fun addNote(title: String, content: String) {
         viewModelScope.launch {
-            repository.insert(note)
+            noteDao.insert(Note(title = title, content = content))
+        }
+    }
+
+    fun insert(note: Note) {
+        viewModelScope.launch {
+            noteDao.insert(note)
         }
     }
 
     fun updateNote(note: Note) {
         viewModelScope.launch {
-            repository.insert(note)
+            noteDao.insert(note)
         }
     }
 
     fun deleteNote(note: Note) {
         viewModelScope.launch {
-            repository.delete(note)
+            noteDao.delete(note)
         }
-    }
-
-    fun getNoteById(noteId: Int): Flow<Note?> {
-        return repository.getNoteById(noteId)
     }
 }
