@@ -17,9 +17,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.isverbit.notespet.NoteViewModel
+import com.isverbit.notespet.R
 import com.isverbit.notespet.navigation.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -34,12 +36,12 @@ fun ViewNoteScreen(navController: NavController, noteId: Int, noteViewModel: Not
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("View Note") },
+                title = { Text(text = stringResource(id = R.string.view_note)) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = stringResource(id = R.string.back)
                         )
                     }
                 },
@@ -49,7 +51,7 @@ fun ViewNoteScreen(navController: NavController, noteId: Int, noteViewModel: Not
                     }) {
                         Icon(
                             imageVector = Icons.Default.Edit,
-                            contentDescription = "Edit Note"
+                            contentDescription = stringResource(id = R.string.edit_note)
                         )
                     }
                 }

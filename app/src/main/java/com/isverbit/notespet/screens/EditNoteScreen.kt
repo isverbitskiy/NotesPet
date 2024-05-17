@@ -22,10 +22,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.isverbit.notespet.Note
 import com.isverbit.notespet.NoteViewModel
+import com.isverbit.notespet.R
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -53,7 +55,7 @@ fun EditNoteScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Edit Note") },
+                title = { Text(text = stringResource(id = R.string.edit_note)) },
                 actions = {
                     IconButton(onClick = {
                         if (title.isNotBlank()) {
@@ -76,10 +78,18 @@ fun EditNoteScreen(
                             }
                         }
                     }) {
-                        Icon(imageVector = Icons.Default.Save, contentDescription = "Save Note")
+                        Icon(
+                            imageVector = Icons.Default.Save, contentDescription = stringResource(
+                                id = R.string.save_note
+                            )
+                        )
                     }
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(imageVector = Icons.Default.Close, contentDescription = "Cancel")
+                        Icon(
+                            imageVector = Icons.Default.Close, contentDescription = stringResource(
+                                id = R.string.close
+                            )
+                        )
                     }
                 }
             )
@@ -93,7 +103,7 @@ fun EditNoteScreen(
             OutlinedTextField(
                 value = title,
                 onValueChange = { title = it },
-                label = { Text("Title") },
+                label = { Text(text = stringResource(id = R.string.title_hint)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp)
@@ -101,7 +111,7 @@ fun EditNoteScreen(
             OutlinedTextField(
                 value = content,
                 onValueChange = { content = it },
-                label = { Text("Content") },
+                label = { Text(text = stringResource(id = R.string.content_hint)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp)
