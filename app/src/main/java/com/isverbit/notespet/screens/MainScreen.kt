@@ -22,10 +22,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.isverbit.notespet.Note
 import com.isverbit.notespet.NoteViewModel
+import com.isverbit.notespet.R
 import com.isverbit.notespet.navigation.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -36,14 +38,18 @@ fun MainScreen(navController: NavController, noteViewModel: NoteViewModel) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Notes") }
+                title = { Text(text = stringResource(id = R.string.app_name)) }
             )
         },
         floatingActionButton = {
             FloatingActionButton(onClick = {
                 navController.navigate(Screen.EditNote.route)
             }) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "Add Note")
+                Icon(
+                    imageVector = Icons.Default.Add, contentDescription = stringResource(
+                        id = R.string.add_note
+                    )
+                )
             }
         }
     ) { padding ->
