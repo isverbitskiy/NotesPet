@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NotesPet</string>
+    <string name="notes">Заметки</string>
+    <string name="add_note">Создать</string>
+    <string name="edit_note">Редактировать</string>
+    <string name="delete_note">Удалить</string>
+    <string name="save_note">Сохранить</string>
+    <string name="title_hint">Введи название</string>
+    <string name="content_hint">А тут текст</string>
+</resources>
