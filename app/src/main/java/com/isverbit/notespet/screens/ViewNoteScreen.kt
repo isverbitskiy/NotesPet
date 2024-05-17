@@ -3,7 +3,7 @@ package com.isverbit.notespet.screens
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -13,6 +13,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -26,48 +27,51 @@ import com.isverbit.notespet.navigation.Screen
 fun ViewNoteScreen(navController: NavController, noteId: Int, noteViewModel: NoteViewModel) {
     val note by noteViewModel.getNoteById(noteId).collectAsState(initial = null)
 
-    note?.let {
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = { Text("View Note") },
-                    actions = {
-                        IconButton(onClick = {
-                            navController.navigate("${Screen.EditNote.route}/$noteId")
-                        }) {
-                            Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit Note")
-                        }
-                        IconButton(onClick = {
-                            noteViewModel.deleteNote(note!!)
-                            navController.navigate(Screen.Main.route) {
-                                popUpTo(Screen.Main.route) { inclusive = true }
-                            }
-                        }) {
-                            Icon(
-                                imageVector = Icons.Default.Delete,
-                                contentDescription = "Delete Note"
-                            )
-                        }
+    LaunchedEffect(noteId) {
+        noteViewModel.getNoteById(noteId)
+    }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("View Note") },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back"
+                        )
                     }
-                )
-            },
-            content = { padding ->
-                Column(
-                    modifier = Modifier
-                        .padding(padding)
-                        .padding(16.dp)
-                ) {
-                    Text(
-                        text = it.title,
-                        style = MaterialTheme.typography.headlineSmall,
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
-                    Text(
-                        text = it.content,
-                        style = MaterialTheme.typography.bodyLarge
-                    )
+                },
+                actions = {
+                    IconButton(onClick = {
+                        navController.navigate("${Screen.EditNote.route}/$noteId")
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "Edit Note"
+                        )
+                    }
                 }
+            )
+        }
+    ) { paddingValues ->
+        note?.let {
+            Column(
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .padding(16.dp)
+            ) {
+                Text(
+                    text = it.title,
+                    style = MaterialTheme.typography.headlineSmall,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+                Text(
+                    text = it.content,
+                    style = MaterialTheme.typography.bodyLarge
+                )
             }
-        )
+        }
     }
 }
