@@ -10,5 +10,4 @@
     <string name="close">Close</string>
     <string name="view_note">View Note</string>
     <string name="back">Back</string>
-    <string name="database_name" translatable="false">note_database</string>
 </resources>
